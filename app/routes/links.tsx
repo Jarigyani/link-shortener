@@ -43,11 +43,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   switch (request.method) {
     case "POST": {
-      const target = body.get("target");
+      let target = body.get("target");
       const id = nanoid(5);
 
       if (!target) {
         return redirect("/links");
+      }
+
+      if (target.startsWith("http://") || target.startsWith("https://")) {
+        // delete protocol
+        target = target.replace(/(^\w+:|^)\/\//, "");
       }
 
       const { data, error } = await client
