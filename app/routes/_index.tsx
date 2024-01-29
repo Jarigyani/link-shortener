@@ -74,8 +74,14 @@ export default function Index() {
         ))}
       </ul>
       <Form ref={formRef} replace method="POST">
-        <input ref={titleRef} type="text" name="name" disabled={isAdding} />
-        <button type="submit" disabled={isAdding}>
+        <input
+          ref={titleRef}
+          type="text"
+          name="name"
+          disabled={isAdding}
+          className="input"
+        />
+        <button type="submit" disabled={isAdding} className="btn">
           Add
         </button>
       </Form>

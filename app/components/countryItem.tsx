@@ -17,7 +17,7 @@ export const CountryItem = ({ country }: Props) => {
       {country.name}
       <fetcher.Form method="DELETE">
         <input type="hidden" name="id" value={country.id} />
-        <button type="submit" disabled={isDeleting}>
+        <button type="submit" disabled={isDeleting} className="btn">
           Delete
         </button>
       </fetcher.Form>
