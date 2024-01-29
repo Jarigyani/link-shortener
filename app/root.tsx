@@ -71,7 +71,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Header supabase={supabase} session={session} />
+        <Header supabase={supabase} session={session} env={env} />
         <Outlet context={{ supabase, session, env }} />
         <ScrollRestoration />
         <Scripts />
