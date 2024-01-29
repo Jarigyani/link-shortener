@@ -1,12 +1,13 @@
+import { AddCountryForm } from "@/components/addCountryForm";
 import { CountryItem } from "@/components/countryItem";
-import { client } from "@/utils/supabase/supabaseClient";
+import { Login } from "@/components/login";
+import { createSupabaseServerClient } from "@/utils/supabase/supabaseClient";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { Form, json, useLoaderData, useNavigation } from "@remix-run/react";
-import { useEffect, useRef } from "react";
+import { json, useLoaderData } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -16,12 +17,23 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const response = new Response();
+  const client = createSupabaseServerClient({ request, response });
   const { data } = await client.from("countries").select("*");
+
+  const {
+    data: { session },
+  } = await client.auth.getSession();
+
+  console.log(session);
 
   return json(data);
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
+  const response = new Response();
+  const client = createSupabaseServerClient({ request, response });
+
   const method = request.method;
   const body = await request.formData();
   const countries = client.from("countries");
@@ -51,20 +63,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function Index() {
   const data = useLoaderData<typeof loader>();
 
-  const nav = useNavigation();
-
-  const isAdding = nav.state !== "idle" && nav.formMethod === "POST";
-
-  const formRef = useRef<HTMLFormElement>(null);
-  const titleRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (!isAdding) {
-      formRef.current?.reset();
-      titleRef.current?.focus();
-    }
-  }, [isAdding]);
-
   return (
     <div className="">
       <h1 className="text-3xl">Welcome to Remix</h1>
@@ -73,18 +71,8 @@ export default function Index() {
           <CountryItem key={country.id} country={country} />
         ))}
       </ul>
-      <Form ref={formRef} replace method="POST">
-        <input
-          ref={titleRef}
-          type="text"
-          name="name"
-          disabled={isAdding}
-          className="input"
-        />
-        <button type="submit" disabled={isAdding} className="btn">
-          Add
-        </button>
-      </Form>
+      <AddCountryForm />
+      <Login />
     </div>
   );
 }
