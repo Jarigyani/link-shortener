@@ -1,5 +1,6 @@
+import { OutletContext } from "@/types/types";
 import { SerializeFrom } from "@remix-run/node";
-import { Form, Link, useFetcher } from "@remix-run/react";
+import { Form, Link, useFetcher, useOutletContext } from "@remix-run/react";
 
 type Props = {
   link: SerializeFrom<{
@@ -11,18 +12,19 @@ type Props = {
 };
 
 export const LinkItem = ({ link }: Props) => {
+  const { env } = useOutletContext<OutletContext>();
   const fetcher = useFetcher();
   const isDeleting =
     fetcher.state !== "idle" && fetcher.formMethod === "DELETE";
 
   const copyLink = () => {
-    navigator.clipboard.writeText(`http://localhost:3000/${link.id}`);
+    navigator.clipboard.writeText(`${env.BASE_URL}/${link.id}`);
   };
 
   return (
     <li key={link.id} className="flex items-center gap-5">
       <span>{link.target}</span>
-      <Link to={`/${link.id}`}>{`http://localhost:3000/${link.id}`}</Link>
+      <Link to={`/${link.id}`}>{`${env.BASE_URL}/${link.id}`}</Link>
       <button type="button" className="btn" onClick={copyLink}>
         copy
       </button>

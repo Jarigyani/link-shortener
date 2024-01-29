@@ -15,7 +15,7 @@ export const LoginButton = ({ supabase, session }: Props) => {
     setLoading(true);
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: "http://localhost:3000/auth/callback" },
+      options: { redirectTo: `${process.env.BASE_URL}/auth/callback` },
     });
     setLoading(false);
   };
