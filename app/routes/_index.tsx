@@ -1,13 +1,13 @@
 import { AddCountryForm } from "@/components/addCountryForm";
 import { CountryItem } from "@/components/countryItem";
-import { OutletContext } from "@/types/types";
+import { LoginButton } from "@/components/loginButton";
 import { createSupabaseServerClient } from "@/utils/supabase/supabaseClient";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { json, useLoaderData, useOutletContext } from "@remix-run/react";
+import { json, useLoaderData } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -77,45 +77,7 @@ export default function Index() {
         ))}
       </ul>
       <AddCountryForm />
-      <Login />
+      <LoginButton session={session} />
     </div>
   );
 }
-
-const Login = () => {
-  const { session } = useLoaderData<typeof loader>();
-  const { supabase } = useOutletContext<OutletContext>();
-
-  const handleLogin = () => {
-    supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: "http://localhost:3000/auth/callback" },
-    });
-  };
-
-  const handleLogout = () => {
-    supabase.auth.signOut();
-  };
-
-  return (
-    <div className="flex h-full w-full items-center justify-center">
-      {session ? (
-        <button
-          type="button"
-          className="btn btn-primary btn-wide"
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
-      ) : (
-        <button
-          type="button"
-          className="btn btn-primary btn-wide"
-          onClick={handleLogin}
-        >
-          Login
-        </button>
-      )}
-    </div>
-  );
-};
