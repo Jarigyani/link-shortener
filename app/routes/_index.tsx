@@ -7,7 +7,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { json, useLoaderData } from "@remix-run/react";
+import { Link, json, useLoaderData } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -76,6 +76,9 @@ export default function Index() {
         ))}
       </ul>
       <AddCountryForm />
+      <Link to="/links" className="btn">
+        Links
+      </Link>
     </div>
   );
 }
