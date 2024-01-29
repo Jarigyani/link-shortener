@@ -7,7 +7,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { Form, json, useLoaderData, useOutletContext } from "@remix-run/react";
+import { json, useLoaderData, useOutletContext } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -66,7 +66,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  const { data } = useLoaderData<typeof loader>();
+  const { data, session } = useLoaderData<typeof loader>();
 
   return (
     <div className="">
@@ -89,18 +89,24 @@ const Login = () => {
   const handleLogin = () => {
     supabase.auth.signInWithOAuth({
       provider: "google",
+      options: { redirectTo: "http://localhost:3000/auth/callback" },
     });
+  };
+
+  const handleLogout = () => {
+    supabase.auth.signOut();
   };
 
   return (
     <div className="flex h-full w-full items-center justify-center">
       {session ? (
-        <Form replace method="POST" action="/login">
-          <input type="hidden" name="action" value="logout" />
-          <button type="submit" className="btn btn-primary btn-wide">
-            Logout
-          </button>
-        </Form>
+        <button
+          type="button"
+          className="btn btn-primary btn-wide"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
       ) : (
         <button
           type="button"
