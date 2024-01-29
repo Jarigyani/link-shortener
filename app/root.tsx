@@ -13,6 +13,7 @@ import {
 } from "@remix-run/react";
 import { createBrowserClient } from "@supabase/auth-helpers-remix";
 import { useEffect, useState } from "react";
+import { Header } from "./components/header";
 import { createSupabaseServerClient } from "./utils/supabase/supabaseClient";
 
 export const links: LinksFunction = () => [
@@ -68,6 +69,7 @@ export default function App() {
         <Links />
       </head>
       <body>
+        <Header supabase={supabase} session={session} />
         <Outlet context={{ supabase, session }} />
         <ScrollRestoration />
         <Scripts />

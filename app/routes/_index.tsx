@@ -1,6 +1,5 @@
 import { AddCountryForm } from "@/components/addCountryForm";
 import { CountryItem } from "@/components/countryItem";
-import { LoginButton } from "@/components/loginButton";
 import { createSupabaseServerClient } from "@/utils/supabase/supabaseClient";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type {
@@ -25,8 +24,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const {
     data: { session },
   } = await client.auth.getSession();
-
-  console.log(session);
 
   return json({ data, session }, { headers: response.headers });
 };
@@ -67,7 +64,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  const { data, session } = useLoaderData<typeof loader>();
+  const { data } = useLoaderData<typeof loader>();
   const [animationParent] = useAutoAnimate();
 
   return (
@@ -79,7 +76,6 @@ export default function Index() {
         ))}
       </ul>
       <AddCountryForm />
-      <LoginButton session={session} />
     </div>
   );
 }

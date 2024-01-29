@@ -1,15 +1,14 @@
 import { loader } from "@/routes/_index";
-import { OutletContext } from "@/types/types";
 import { SerializeFrom } from "@remix-run/node";
-import { useOutletContext } from "@remix-run/react";
+import { SupabaseClient } from "@supabase/supabase-js";
 import { useState } from "react";
 
 type Props = {
+  supabase: SupabaseClient;
   session: SerializeFrom<typeof loader>["session"];
 };
 
-export const LoginButton = ({ session }: Props) => {
-  const { supabase } = useOutletContext<OutletContext>();
+export const LoginButton = ({ supabase, session }: Props) => {
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
@@ -28,7 +27,7 @@ export const LoginButton = ({ session }: Props) => {
   };
 
   return (
-    <div className="flex h-full w-full items-center justify-center">
+    <>
       {session ? (
         <button
           type="button"
@@ -48,6 +47,6 @@ export const LoginButton = ({ session }: Props) => {
           Login
         </button>
       )}
-    </div>
+    </>
   );
 };
