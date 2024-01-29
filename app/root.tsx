@@ -14,6 +14,7 @@ import {
 import { createBrowserClient } from "@supabase/auth-helpers-remix";
 import { useEffect, useState } from "react";
 import { Header } from "./components/header";
+import { Database } from "./utils/supabase/database.types";
 import { createSupabaseServerClient } from "./utils/supabase/supabaseClient";
 
 export const links: LinksFunction = () => [
@@ -42,7 +43,7 @@ export default function App() {
   const { revalidate } = useRevalidator();
 
   const [supabase] = useState(() =>
-    createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
+    createBrowserClient<Database>(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
   );
 
   const serverAccessToken = session?.access_token;
