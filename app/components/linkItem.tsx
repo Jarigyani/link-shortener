@@ -1,6 +1,7 @@
 import { OutletContext } from "@/types/types";
 import { SerializeFrom } from "@remix-run/node";
 import { Form, Link, useFetcher, useOutletContext } from "@remix-run/react";
+import { HiOutlineClipboardList } from "react-icons/hi";
 
 type Props = {
   link: SerializeFrom<{
@@ -25,8 +26,12 @@ export const LinkItem = ({ link }: Props) => {
     <li key={link.id} className="flex items-center gap-5">
       <span>{link.target}</span>
       <Link to={`/${link.id}`}>{`${env.BASE_URL}/${link.id}`}</Link>
-      <button type="button" className="btn" onClick={copyLink}>
-        copy
+      <button
+        type="button"
+        className="btn btn-sm btn-outline"
+        onClick={copyLink}
+      >
+        <HiOutlineClipboardList />
       </button>
       <Form replace method="DELETE">
         <input type="hidden" name="id" value={link.id} />
