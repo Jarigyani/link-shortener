@@ -2,6 +2,7 @@ import { AddCountryForm } from "@/components/addCountryForm";
 import { CountryItem } from "@/components/countryItem";
 import { LoginButton } from "@/components/loginButton";
 import { createSupabaseServerClient } from "@/utils/supabase/supabaseClient";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -67,11 +68,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function Index() {
   const { data, session } = useLoaderData<typeof loader>();
+  const [animationParent] = useAutoAnimate();
 
   return (
     <div className="">
       <h1 className="text-3xl">Welcome to Remix</h1>
-      <ul>
+      <ul ref={animationParent}>
         {data?.map((country) => (
           <CountryItem key={country.id} country={country} />
         ))}

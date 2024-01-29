@@ -12,6 +12,7 @@
     "gentype": "supabase gen types typescript --project-id qxhkvcloqoprgxyhkwsj > app/utils/supabase/database.types.ts"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.8.1",
     "@remix-run/css-bundle": "^2.5.1",
     "@remix-run/node": "^2.5.1",
     "@remix-run/react": "^2.5.1",
