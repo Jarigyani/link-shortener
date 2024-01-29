@@ -1,13 +1,13 @@
 import { AddCountryForm } from "@/components/addCountryForm";
 import { CountryItem } from "@/components/countryItem";
-import { Login } from "@/components/login";
+import { OutletContext } from "@/types/types";
 import { createSupabaseServerClient } from "@/utils/supabase/supabaseClient";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { json, useLoaderData } from "@remix-run/react";
+import { Form, json, useLoaderData, useOutletContext } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -27,7 +27,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   console.log(session);
 
-  return json(data);
+  return json({ data, session }, { headers: response.headers });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -46,22 +46,27 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         return json({ error: "Invalid name" }, { status: 400 });
       }
 
-      return await countries.insert({ name });
+      await countries.insert({ name });
+      return json({}, { headers: response.headers });
     }
     case "DELETE": {
       const id = body.get("id");
 
       if (!id || typeof id !== "string") {
-        return json({ error: "Invalid id" }, { status: 400 });
+        return json(
+          { error: "Invalid id" },
+          { headers: response.headers, status: 400 }
+        );
       }
 
-      return await countries.delete().eq("id", id);
+      await countries.delete().eq("id", id);
+      return json({}, { headers: response.headers });
     }
   }
 };
 
 export default function Index() {
-  const data = useLoaderData<typeof loader>();
+  const { data } = useLoaderData<typeof loader>();
 
   return (
     <div className="">
@@ -76,3 +81,35 @@ export default function Index() {
     </div>
   );
 }
+
+const Login = () => {
+  const { session } = useLoaderData<typeof loader>();
+  const { supabase } = useOutletContext<OutletContext>();
+
+  const handleLogin = () => {
+    supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+  };
+
+  return (
+    <div className="flex h-full w-full items-center justify-center">
+      {session ? (
+        <Form replace method="POST" action="/login">
+          <input type="hidden" name="action" value="logout" />
+          <button type="submit" className="btn btn-primary btn-wide">
+            Logout
+          </button>
+        </Form>
+      ) : (
+        <button
+          type="button"
+          className="btn btn-primary btn-wide"
+          onClick={handleLogin}
+        >
+          Login
+        </button>
+      )}
+    </div>
+  );
+};
