@@ -101,11 +101,22 @@ export default function Links() {
 
   return (
     <div>
-      <ul ref={animateRef} className="flex flex-col gap-3 py-3">
-        {data?.map((link) => (
-          <LinkItem link={link} key={link.id} />
-        ))}
-      </ul>
+      <table className="table">
+        {/* head */}
+        <thead>
+          <tr>
+            <th />
+            <th>link</th>
+            <th>generated</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody ref={animateRef}>
+          {data?.map((link) => (
+            <LinkItem link={link} key={link.id} />
+          ))}
+        </tbody>
+      </table>
       <Form ref={formRef} replace method="POST" className="join">
         <input
           ref={linkRef}

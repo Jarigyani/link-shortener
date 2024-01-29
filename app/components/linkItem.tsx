@@ -23,22 +23,27 @@ export const LinkItem = ({ link }: Props) => {
   };
 
   return (
-    <li key={link.id} className="flex items-center gap-5">
-      <span>{link.target}</span>
-      <Link to={`/${link.id}`}>{`${env.BASE_URL}/${link.id}`}</Link>
-      <button
-        type="button"
-        className="btn btn-sm btn-outline"
-        onClick={copyLink}
-      >
-        <HiOutlineClipboardList />
-      </button>
-      <Form replace method="DELETE">
-        <input type="hidden" name="id" value={link.id} />
-        <button type="submit" className="btn" disabled={isDeleting}>
-          {isDeleting ? "Deleting..." : "Delete"}
+    <tr className="hover">
+      <th>{link.id}</th>
+      <td>{link.target}</td>
+      <td>
+        <Link to={`/${link.id}`}>{`${env.BASE_URL}/${link.id}`}</Link>
+        <button
+          type="button"
+          className="btn btn-sm btn-outline"
+          onClick={copyLink}
+        >
+          <HiOutlineClipboardList />
         </button>
-      </Form>
-    </li>
+      </td>
+      <td>
+        <Form replace method="DELETE">
+          <input type="hidden" name="id" value={link.id} />
+          <button type="submit" className="btn" disabled={isDeleting}>
+            {isDeleting ? "Deleting..." : "Delete"}
+          </button>
+        </Form>
+      </td>
+    </tr>
   );
 };
