@@ -1,10 +1,12 @@
+import { CountryItem } from "@/components/countryItem";
 import { client } from "@/utils/supabase/supabaseClient";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { Form, json, useLoaderData } from "@remix-run/react";
+import { Form, json, useLoaderData, useNavigation } from "@remix-run/react";
+import { useEffect, useRef } from "react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -49,23 +51,33 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function Index() {
   const data = useLoaderData<typeof loader>();
 
+  const nav = useNavigation();
+
+  const isAdding = nav.state !== "idle" && nav.formMethod === "POST";
+
+  const formRef = useRef<HTMLFormElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isAdding) {
+      formRef.current?.reset();
+      titleRef.current?.focus();
+    }
+  }, [isAdding]);
+
   return (
     <div className="">
       <h1 className="text-3xl">Welcome to Remix</h1>
       <ul>
         {data?.map((country) => (
-          <li key={country.id} className="pl-5 flex gap-5">
-            {country.name}
-            <Form replace method="DELETE">
-              <input type="hidden" name="id" value={country.id} />
-              <button type="submit">Delete</button>
-            </Form>
-          </li>
+          <CountryItem key={country.id} country={country} />
         ))}
       </ul>
-      <Form replace method="POST">
-        <input type="text" name="name" />
-        <button type="submit">Add</button>
+      <Form ref={formRef} replace method="POST">
+        <input ref={titleRef} type="text" name="name" disabled={isAdding} />
+        <button type="submit" disabled={isAdding}>
+          Add
+        </button>
       </Form>
     </div>
   );
