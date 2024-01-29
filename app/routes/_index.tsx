@@ -1,11 +1,10 @@
-import { Database } from "@/utils/supabase/database.types";
+import { client } from "@/utils/supabase/supabaseClient";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
 import { Form, json, useLoaderData } from "@remix-run/react";
-import { createServerClient } from "@supabase/auth-helpers-remix";
 
 export const meta: MetaFunction = () => {
   return [
@@ -15,74 +14,41 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const response = new Response();
-  const supabaseClient = createServerClient<Database>(
-    process.env.SUPABASE_URL ?? "",
-    process.env.SUPABASE_ANON_KEY ?? "",
-    { request, response }
-  );
+  const { data } = await client.from("countries").select("*");
 
-  const { data } = await supabaseClient.from("countries").select("*");
-
-  return json(
-    { data },
-    {
-      headers: response.headers,
-    }
-  );
+  return json(data);
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const method = request.method;
   const body = await request.formData();
+  const countries = client.from("countries");
 
-  const response = new Response();
+  switch (method) {
+    case "POST": {
+      const name = body.get("name");
 
-  const supabaseClient = createServerClient<Database>(
-    process.env.SUPABASE_URL ?? "",
-    process.env.SUPABASE_ANON_KEY ?? "",
-    { request, response }
-  );
+      if (!name || typeof name !== "string") {
+        return json({ error: "Invalid name" }, { status: 400 });
+      }
 
-  if (method === "POST") {
-    const name = body.get("name");
-
-    if (!name || typeof name !== "string") {
-      console.log("error");
-      return "error";
+      return await countries.insert({ name });
     }
+    case "DELETE": {
+      const id = body.get("id");
 
-    const { error } = await supabaseClient.from("countries").insert({ name });
+      if (!id || typeof id !== "string") {
+        return json({ error: "Invalid id" }, { status: 400 });
+      }
 
-    if (error) {
-      return "error";
+      return await countries.delete().eq("id", id);
     }
-
-    return "success";
-  }
-
-  if (method === "DELETE") {
-    const id = body.get("id");
-
-    if (!id || typeof id !== "string") {
-      return "error";
-    }
-
-    const { error } = await supabaseClient
-      .from("countries")
-      .delete()
-      .eq("id", id);
-
-    if (error) {
-      return "error";
-    }
-
-    return "success";
   }
 };
 
 export default function Index() {
-  const { data } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+
   return (
     <div className="">
       <h1 className="text-3xl">Welcome to Remix</h1>
