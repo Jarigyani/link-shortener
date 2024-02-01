@@ -1,6 +1,6 @@
 import { createSupabaseServerClient } from "@/utils/supabase/supabaseClient";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { json } from "@remix-run/react";
+import { json, redirect } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -17,6 +17,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const {
     data: { session },
   } = await client.auth.getSession();
+
+  if (session) return redirect("/links");
 
   return json({ data, session }, { headers: response.headers });
 };
