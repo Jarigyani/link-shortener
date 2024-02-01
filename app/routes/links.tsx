@@ -14,8 +14,10 @@ import { useEffect, useRef } from "react";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const response = new Response();
   const client = createSupabaseServerClient({ request, response });
-  const session = await client.auth.getSession();
-  const userId = session.data.session?.user.id;
+  const {
+    data: { session },
+  } = await client.auth.getSession();
+  const userId = session?.user.id;
 
   if (!userId) {
     return redirect("/");
